@@ -1,35 +1,80 @@
-import React, { useEffect, useState } from "react";
-import API from "../api";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Navbar from "../Components/Navbar";
+import "./BlogList.css";
 
 function BlogList() {
   const [blogs, setBlogs] = useState([]);
+  const navigate = useNavigate();
+
+  // Fetch all blogs
+  const fetchBlogs = async () => {
+    try {
+      const res = await fetch("/api/posts/");
+      const data = await res.json();
+      setBlogs(data);
+    } catch (err) {
+      console.error("Error fetching blogs:", err);
+    }
+  };
 
   useEffect(() => {
-    API.get("posts/").then((res) => setBlogs(res.data));
+    fetchBlogs();
   }, []);
 
+  // Delete blog
   const deleteBlog = async (id) => {
-    await API.delete(`posts/${id}/`);
-    setBlogs(blogs.filter((b) => b.id !== id));
+    const confirmDelete = window.confirm("Delete this blog?");
+    if (!confirmDelete) return;
+
+    try {
+      await fetch(`/api/posts/${id}/`, { method: "DELETE" });
+      fetchBlogs();
+    } catch (err) {
+      console.error("Delete failed:", err);
+    }
   };
 
   return (
-    <div style={{ padding: 20 }}>
-      <h2>Blogs</h2>
-      <Link to="/create">Create Blog</Link>
+    <div className="blog-page">
+      <Navbar />
 
-      {blogs.map((b) => (
-        <div key={b.id} style={{ border: "1px solid #ccc", margin: 10, padding: 10 }}>
-          <h3>{b.title}</h3>
-          <p>{b.content}</p>
+      <div className="top-bar">
+        <h2 className="page-title">✨ Your Blogs</h2>
 
-          <Link to={`/edit/${b.id}`}>Edit</Link>
-          <button onClick={() => deleteBlog(b.id)} style={{ marginLeft: 10 }}>
-            Delete
-          </button>
+        <button className="create-btn" onClick={() => navigate("/create")}>
+          + Create Blog
+        </button>
+      </div>
+
+      {blogs.length === 0 ? (
+        <p className="no-blog">No blogs available.</p>
+      ) : (
+        <div className="blog-grid">
+          {blogs.map((blog) => (
+            <div key={blog.id} className="blog-card">
+              <h3>{blog.title}</h3>
+              <p>{blog.content}</p>
+
+              <div className="card-actions">
+                <button
+                  className="btn edit"
+                  onClick={() => navigate(`/edit/${blog.id}`)}
+                >
+                  Edit
+                </button>
+
+                <button
+                  className="btn delete"
+                  onClick={() => deleteBlog(blog.id)}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
-      ))}
+      )}
     </div>
   );
 }

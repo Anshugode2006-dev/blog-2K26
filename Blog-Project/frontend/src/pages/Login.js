@@ -1,51 +1,51 @@
 import React, { useState } from "react";
-import API from "../api";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import "./Login.css";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  const navigate = useNavigate();   // 👈 React router navigation
 
   const handleLogin = async () => {
     try {
-      const res = await API.post("login/", {
-        username: username,
-        password: password,
-      });
+      await axios.post("/api/login/", { username, password });
 
-      // save token
-      localStorage.setItem("token", res.data.token);
+      alert("Login successful ✅");
 
-      // redirect to blogs page
+      // ✅ Proper React redirect
       navigate("/blogs");
-    } catch (error) {
-        console.log("LOGIN ERROR:", error.response?.data);
-        alert("Invalid credentials");
-      }
-      
+
+    } catch (err) {
+      alert("Invalid credentials ❌");
+    }
   };
 
   return (
-    <div style={{ padding: 20 }}>
-      <h2>Login</h2>
+    <div className="login-page">
+      <div className="login-card">
+        <h2>Welcome Back 👋</h2>
 
-      <input
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <br /><br />
+        <input
+          className="login-input"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
 
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <br /><br />
+        <input
+          type="password"
+          className="login-input"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
 
-      <button onClick={handleLogin}>Login</button>
+        <button className="login-btn" onClick={handleLogin}>
+          Login
+        </button>
+      </div>
     </div>
   );
 }

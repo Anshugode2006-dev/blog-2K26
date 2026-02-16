@@ -1,112 +1,63 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import Post, Comment, Profile
-from .forms import PostForm, CommentForm, SignUpForm, ProfileForm
+from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.db.models import Count, Q
-from django.core.paginator import Paginator
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import Post
+import json
 
-# ================= TEMPLATE VIEWS =================
 
+# React Home
 def home(request):
+    return render(request, "index.html")
+
+
+# Blog list page (HTML fallback)
+def blog_list(request):
     posts = Post.objects.all()
-    return render(request, 'blog/home.html', {'posts': posts})
+    return render(request, "blogs.html", {"posts": posts})
 
 
-def about(request):
-    return render(request, 'blog/about.html')
-
-
-def contact(request):
-    return render(request, 'blog/contact.html')
-
-
-def signup_view(request):
-    return render(request, 'blog/signup.html')
-
-
-def login_view(request):
-    return render(request, 'blog/login.html')
-
-
-def logout_view(request):
-    return redirect('home')
-
-
-def profile(request, username):
-    user_obj = get_object_or_404(User, username=username)
-    return render(request, 'blog/profile.html', {'profile_user': user_obj})
-
-
-def post_detail(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    return render(request, 'blog/post_detail.html', {'post': post})
-
-
-@login_required
-def post_create(request):
-    return render(request, 'blog/post_form.html')
-
-
-@login_required
-def post_update(request, pk):
-    return render(request, 'blog/post_form.html')
-
-
-@login_required
-def post_delete(request, pk):
-    return redirect('home')
-
-
-# ================= API VIEWS FOR REACT =================
-
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
-from .serializers import PostSerializer
-
-
-@api_view(['POST'])
+# -------- LOGIN API --------
+@csrf_exempt
 def api_login(request):
-    username = request.data.get('username')
-    password = request.data.get('password')
-    user = authenticate(username=username, password=password)
+    if request.method == "POST":
+        data = json.loads(request.body)
+        username = data.get("username")
+        password = data.get("password")
 
-    if user:
-        token, _ = Token.objects.get_or_create(user=user)
-        return Response({'token': token.key})
-    return Response({'error': 'Invalid credentials'}, status=400)
+        user = authenticate(request, username=username, password=password)
 
-
-@api_view(['GET', 'POST'])
-@permission_classes([IsAuthenticated])
-def api_posts(request):
-    if request.method == 'GET':
-        posts = Post.objects.all()
-        return Response(PostSerializer(posts, many=True).data)
-
-    if request.method == 'POST':
-        serializer = PostSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(author=request.user)
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+        if user:
+            login(request, user)
+            return JsonResponse({"message": "Login success"})
+        else:
+            return JsonResponse({"error": "Invalid credentials"}, status=400)
 
 
-@api_view(['PUT', 'DELETE'])
-@permission_classes([IsAuthenticated])
-def api_post_detail(request, pk):
-    post = get_object_or_404(Post, pk=pk, author=request.user)
+# -------- LOGOUT API --------
+def api_logout(request):
+    logout(request)
+    return JsonResponse({"message": "Logged out"})
 
-    if request.method == 'PUT':
-        serializer = PostSerializer(post, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
 
-    if request.method == 'DELETE':
-        post.delete()
-        return Response(status=204)
+# -------- CREATE BLOG API --------
+@csrf_exempt
+def create_blog(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        title = data.get("title")
+        content = data.get("content")
+
+        if request.user.is_authenticated:
+            Post.objects.create(
+                title=title,
+                content=content,
+                author=request.user
+            )
+            return JsonResponse({"message": "Post created"})
+        else:
+            return JsonResponse({"error": "Login required"}, status=401)
+
+    # GET → return all posts
+    posts = list(Post.objects.values())
+    return JsonResponse(posts, safe=False)

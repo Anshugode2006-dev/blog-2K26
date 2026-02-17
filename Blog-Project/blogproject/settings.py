@@ -3,7 +3,6 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # SECURITY
 SECRET_KEY = 'django-insecure-change-this-key'
 DEBUG = True
@@ -49,11 +48,10 @@ ROOT_URLCONF = 'blogproject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / "frontend/build"],   # ← IMPORTANT
+        'DIRS': [BASE_DIR / "build"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
-                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -61,6 +59,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 
 
@@ -96,8 +95,11 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    BASE_DIR / "frontend/build/static",
+    os.path.join(BASE_DIR, 'build', 'static'),
 ]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 
 
 

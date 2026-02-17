@@ -16,4 +16,5 @@ urlpatterns = [
 
     # Blog API
     path('api/posts/', views.create_blog),
+    path('api/register/', views.api_register),
 ]

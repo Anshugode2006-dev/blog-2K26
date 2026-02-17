@@ -24,16 +24,47 @@ def blog_list(request):
 @csrf_exempt
 def api_login(request):
     if request.method == "POST":
-        username = request.POST.get("username")
-        password = request.POST.get("password")
+        try:
+            data = json.loads(request.body)
+            username = data.get("username")
+            password = data.get("password")
+        except:
+            return JsonResponse({"error": "Invalid data"}, status=400)
 
         user = authenticate(request, username=username, password=password)
 
-        if user:
+        if user is not None:
             login(request, user)
             return JsonResponse({"message": "Login success"})
         else:
             return JsonResponse({"error": "Invalid credentials"}, status=400)
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
+
+@csrf_exempt
+def api_register(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            username = data.get("username")
+            email = data.get("email")
+            password = data.get("password")
+        except:
+            return JsonResponse({"error": "Invalid data"}, status=400)
+
+        from django.contrib.auth.models import User
+
+        if User.objects.filter(username=username).exists():
+            return JsonResponse({"error": "Username already exists"}, status=400)
+
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=password
+        )
+
+        return JsonResponse({"message": "User created successfully"})
 
     return JsonResponse({"error": "Invalid request"}, status=400)
 

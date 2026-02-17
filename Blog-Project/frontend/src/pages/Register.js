@@ -3,46 +3,42 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
 
-function Login() {
+function Register() {
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/login/",
+      await axios.post(
+        "http://127.0.0.1:8000/api/register/",
         {
-          username: username,
-          password: password,
+          username,
+          email,
+          password,
         },
         {
-          withCredentials: true,
+          withCredentials: true,   
         }
       );
 
-      console.log(response.data);
+      alert("Registration successful ");
 
-      alert("Login successful ✅");
-      navigate("/blogs");
-
+      navigate("/blogs");   
     } catch (error) {
       if (error.response) {
-        alert(error.response.data.error || "Login failed ");
+        alert(error.response.data.error || "Registration failed ");
       } else {
-        alert("Server not reachable ");
+        alert("Server error ");
       }
     }
-  };
-
-  const goToRegister = () => {
-    navigate("/register");
   };
 
   return (
     <div className="login-page">
       <div className="login-card">
-        <h2>Welcome Back 👋</h2>
+        <h2>Create Account </h2>
 
         <input
           className="login-input"
@@ -54,28 +50,26 @@ function Login() {
 
         <input
           className="login-input"
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+
+        <input
+          className="login-input"
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <button className="login-btn" onClick={handleLogin}>
-          Login
-        </button>
-
-
-        <button
-          className="login-btn"
-          style={{ marginTop: "10px", backgroundColor: "#6c757d" }}
-          onClick={goToRegister}
-        >
+        <button className="login-btn" onClick={handleRegister}>
           Register
         </button>
-
       </div>
     </div>
   );
 }
 
-export default Login;
+export default Register;

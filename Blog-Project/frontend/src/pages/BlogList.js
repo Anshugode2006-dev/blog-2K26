@@ -1,79 +1,64 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../Components/Navbar";
-import "./BlogList.css";
+
+const API = "http://127.0.0.1:8000/api";
 
 function BlogList() {
   const [blogs, setBlogs] = useState([]);
   const navigate = useNavigate();
 
-  // Fetch all blogs
-  const fetchBlogs = async () => {
-    try {
-      const res = await fetch("/api/posts/");
-      const data = await res.json();
-      setBlogs(data);
-    } catch (err) {
-      console.error("Error fetching blogs:", err);
-    }
-  };
-
+  // 🔐 Load blogs after login
   useEffect(() => {
-    fetchBlogs();
-  }, []);
+    fetch(`${API}/posts/`, {
+      credentials: "include",   // VERY IMPORTANT for Django session
+    })
+      .then((res) => {
+        if (res.status === 401) {
+          navigate("/"); // not logged in
+          return [];
+        }
+        return res.json();
+      })
+      .then((data) => setBlogs(data))
+      .catch(() => navigate("/"));
+  }, [navigate]);
 
-  // Delete blog
+  // 🗑 Delete blog
   const deleteBlog = async (id) => {
-    const confirmDelete = window.confirm("Delete this blog?");
-    if (!confirmDelete) return;
+    await fetch(`${API}/posts/${id}/`, {
+      method: "DELETE",
+      credentials: "include",
+    });
 
-    try {
-      await fetch(`/api/posts/${id}/`, { method: "DELETE" });
-      fetchBlogs();
-    } catch (err) {
-      console.error("Delete failed:", err);
-    }
+    setBlogs(blogs.filter((b) => b.id !== id));
   };
 
   return (
-    <div className="blog-page">
+    <div className="container">
       <Navbar />
 
-      <div className="top-bar">
-        <h2 className="page-title">✨ Your Blogs</h2>
-
-        <button className="create-btn" onClick={() => navigate("/create")}>
-          + Create Blog
-        </button>
-      </div>
+      <button className="create-btn" onClick={() => navigate("/create")}>
+        + Create Blog
+      </button>
 
       {blogs.length === 0 ? (
-        <p className="no-blog">No blogs available.</p>
+        <p>No blogs available.</p>
       ) : (
-        <div className="blog-grid">
-          {blogs.map((blog) => (
-            <div key={blog.id} className="blog-card">
-              <h3>{blog.title}</h3>
-              <p>{blog.content}</p>
+        blogs.map((blog) => (
+          <div key={blog.id} className="card">
+            <h3>{blog.title}</h3>
+            <p>{blog.content}</p>
 
-              <div className="card-actions">
-                <button
-                  className="btn edit"
-                  onClick={() => navigate(`/edit/${blog.id}`)}
-                >
-                  Edit
-                </button>
+            <button onClick={() => navigate(`/edit/${blog.id}`)}>
+              Edit
+            </button>
 
-                <button
-                  className="btn delete"
-                  onClick={() => deleteBlog(blog.id)}
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+            <button onClick={() => deleteBlog(blog.id)}>
+              Delete
+            </button>
+          </div>
+        ))
       )}
     </div>
   );

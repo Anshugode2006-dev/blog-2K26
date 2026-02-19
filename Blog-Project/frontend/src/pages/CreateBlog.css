@@ -1,0 +1,87 @@
+/* ===== Background with your image ===== */
+.create-page {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  
+    background: url("../assets/create-bg.jpg") no-repeat center center/cover;
+    font-family: "Poppins", sans-serif;
+    position: relative;
+  }
+  
+  /* Optional soft overlay for better readability */
+  .create-page::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(102, 76, 160, 0.45);
+    backdrop-filter: blur(2px);
+  }
+  
+  /* ===== Glass Card ===== */
+  .create-card {
+    position: relative;
+    z-index: 1;
+  
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(18px);
+  
+    padding: 40px;
+    border-radius: 22px;
+    width: 90%;
+    max-width: 450px;
+  
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+  
+    text-align: center;
+  }
+  
+  /* Title */
+  .create-card h2 {
+    color: white;
+    margin-bottom: 22px;
+    font-weight: 600;
+  }
+  
+  /* Inputs */
+  .create-card input,
+  .create-card textarea {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+  
+    border: none;
+    border-radius: 12px;
+    outline: none;
+  
+    font-size: 14px;
+    background: rgba(255, 255, 255, 0.9);
+  }
+  
+  /* Button */
+  .create-card button {
+    width: 100%;
+    padding: 13px;
+    margin-top: 12px;
+  
+    border: none;
+    border-radius: 14px;
+  
+    color: white;
+    font-weight: 600;
+    font-size: 15px;
+  
+    cursor: pointer;
+    transition: 0.25s ease;
+  
+    background: linear-gradient(90deg, #36d1dc, #5b86e5);
+    box-shadow: 0 6px 18px rgba(91, 134, 229, 0.4);
+  }
+  
+  .create-card button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  }
+  

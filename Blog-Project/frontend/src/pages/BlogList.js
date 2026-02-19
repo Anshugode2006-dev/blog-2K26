@@ -1,75 +1,53 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import API from "../api";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../Components/Navbar";
 import "./BlogList.css";
 
-function BlogList() {
-  const [blogs, setBlogs] = useState([]);
+export default function BlogList() {
+  const [posts, setPosts] = useState([]);
   const navigate = useNavigate();
 
-  // Fetch all blogs
-  const fetchBlogs = async () => {
-    try {
-      const res = await fetch("/api/posts/");
-      const data = await res.json();
-      setBlogs(data);
-    } catch (err) {
-      console.error("Error fetching blogs:", err);
-    }
+  const loadPosts = async () => {
+    const res = await API.get("posts/");
+    setPosts(res.data);
   };
 
   useEffect(() => {
-    fetchBlogs();
+    loadPosts();
   }, []);
 
-  // Delete blog
-  const deleteBlog = async (id) => {
-    const confirmDelete = window.confirm("Delete this blog?");
-    if (!confirmDelete) return;
+  const deletePost = async (id) => {
+    await API.delete(`posts/${id}/`);
+    loadPosts();
+  };
 
-    try {
-      await fetch(`/api/posts/${id}/`, { method: "DELETE" });
-      fetchBlogs();
-    } catch (err) {
-      console.error("Delete failed:", err);
-    }
+  const logout = () => {
+    localStorage.removeItem("token");
+    navigate("/");
   };
 
   return (
     <div className="blog-page">
-      <Navbar />
-
       <div className="top-bar">
-        <h2 className="page-title">✨ Your Blogs</h2>
-
-        <button className="create-btn" onClick={() => navigate("/create")}>
-          + Create Blog
-        </button>
+        <h2 className="page-title">My Blogs</h2>
+        <div>
+          <button className="create-btn" onClick={() => navigate("/create")}>Create</button>
+          <button className="create-btn" onClick={logout}>Logout</button>
+        </div>
       </div>
 
-      {blogs.length === 0 ? (
-        <p className="no-blog">No blogs available.</p>
+      {posts.length === 0 ? (
+        <p className="no-blog">No blogs yet.</p>
       ) : (
         <div className="blog-grid">
-          {blogs.map((blog) => (
-            <div key={blog.id} className="blog-card">
-              <h3>{blog.title}</h3>
-              <p>{blog.content}</p>
+          {posts.map((p) => (
+            <div className="blog-card" key={p.id}>
+              <h3>{p.title}</h3>
+              <p>{p.content}</p>
 
               <div className="card-actions">
-                <button
-                  className="btn edit"
-                  onClick={() => navigate(`/edit/${blog.id}`)}
-                >
-                  Edit
-                </button>
-
-                <button
-                  className="btn delete"
-                  onClick={() => deleteBlog(blog.id)}
-                >
-                  Delete
-                </button>
+                <button className="btn edit" onClick={() => navigate(`/edit/${p.id}`)}>Edit</button>
+                <button className="btn delete" onClick={() => deletePost(p.id)}>Delete</button>
               </div>
             </div>
           ))}
@@ -78,5 +56,3 @@ function BlogList() {
     </div>
   );
 }
-
-export default BlogList;

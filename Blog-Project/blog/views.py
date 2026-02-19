@@ -1,98 +1,101 @@
-from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render
-from django.http import JsonResponse
-from django.contrib.auth import authenticate, login, logout
-from django.conf import settings
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
+from rest_framework.authtoken.models import Token
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
 from .models import Post
-import json
-import os
+from .serializers import PostSerializer
 
 
+# ================== AUTH ==================
 
-# React Home
-def home(request):
-    return render(request, "index.html")
-
-
-# Blog list page (HTML fallback)
-def blog_list(request):
-    posts = Post.objects.all()
-    return render(request, "blogs.html", {"posts": posts})
-
-
-# -------- LOGIN API --------
-@csrf_exempt
-def api_login(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            username = data.get("username")
-            password = data.get("password")
-        except:
-            return JsonResponse({"error": "Invalid data"}, status=400)
-
-        user = authenticate(request, username=username, password=password)
-
-        if user is not None:
-            login(request, user)
-            return JsonResponse({"message": "Login success"})
-        else:
-            return JsonResponse({"error": "Invalid credentials"}, status=400)
-
-    return JsonResponse({"error": "Invalid request"}, status=400)
-
-
-@csrf_exempt
+@api_view(["POST"])
+@permission_classes([AllowAny])
 def api_register(request):
+    username = request.data.get("username")
+    password = request.data.get("password")
+
+    if not username or not password:
+        return Response({"error": "Username & password required"}, status=400)
+
+    if User.objects.filter(username=username).exists():
+        return Response({"error": "User already exists"}, status=400)
+
+    user = User.objects.create_user(username=username, password=password)
+    token, _ = Token.objects.get_or_create(user=user)
+
+    return Response({"token": token.key}, status=201)
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def api_login(request):
+    username = request.data.get("username")
+    password = request.data.get("password")
+
+    user = authenticate(username=username, password=password)
+    if not user:
+        return Response({"error": "Invalid credentials"}, status=401)
+
+    token, _ = Token.objects.get_or_create(user=user)
+    return Response({"token": token.key}, status=200)
+
+
+# ================== BLOG CRUD ==================
+
+@api_view(["GET", "POST"])
+@permission_classes([IsAuthenticated])
+def posts(request):
+    """
+    GET  → list all posts of logged-in user
+    POST → create new post
+    """
+
+    # 🔹 LIST POSTS
+    if request.method == "GET":
+        all_posts = Post.objects.filter(author=request.user).order_by("-id")
+        serializer = PostSerializer(all_posts, many=True)
+        return Response(serializer.data, status=200)
+
+    # 🔹 CREATE POST
     if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            username = data.get("username")
-            email = data.get("email")
-            password = data.get("password")
-        except:
-            return JsonResponse({"error": "Invalid data"}, status=400)
-
-        from django.contrib.auth.models import User
-
-        if User.objects.filter(username=username).exists():
-            return JsonResponse({"error": "Username already exists"}, status=400)
-
-        user = User.objects.create_user(
-            username=username,
-            email=email,
-            password=password
-        )
-
-        return JsonResponse({"message": "User created successfully"})
-
-    return JsonResponse({"error": "Invalid request"}, status=400)
+        serializer = PostSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(author=request.user)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
 
 
-# -------- LOGOUT API --------
-def api_logout(request):
-    logout(request)
-    return JsonResponse({"message": "Logged out"})
+@api_view(["GET", "PUT", "DELETE"])
+@permission_classes([IsAuthenticated])
+def post_detail(request, pk):
+    """
+    GET    → retrieve single post (for Edit page)
+    PUT    → update post
+    DELETE → delete post
+    """
 
+    try:
+        post = Post.objects.get(pk=pk, author=request.user)
+    except Post.DoesNotExist:
+        return Response({"error": "Post not found"}, status=404)
 
-# -------- CREATE BLOG API --------
-@csrf_exempt
-def create_blog(request):
-    if request.method == "POST":
-        data = json.loads(request.body)
-        title = data.get("title")
-        content = data.get("content")
+    # 🔹 GET SINGLE POST
+    if request.method == "GET":
+        serializer = PostSerializer(post)
+        return Response(serializer.data, status=200)
 
-        if request.user.is_authenticated:
-            Post.objects.create(
-                title=title,
-                content=content,
-                author=request.user
-            )
-            return JsonResponse({"message": "Post created"})
-        else:
-            return JsonResponse({"error": "Login required"}, status=401)
+    # 🔹 UPDATE POST
+    if request.method == "PUT":
+        serializer = PostSerializer(post, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=200)
+        return Response(serializer.errors, status=400)
 
-    # GET → return all posts
-    posts = list(Post.objects.values())
-    return JsonResponse(posts, safe=False)
+    # 🔹 DELETE POST
+    if request.method == "DELETE":
+        post.delete()
+        return Response({"message": "Post deleted"}, status=204)

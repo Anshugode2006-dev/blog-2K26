@@ -1,52 +1,179 @@
-/* Full gradient background */
-.login-page {
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(135deg, #8e2de2, #4a00e0);
-    font-family: "Poppins", sans-serif;
+/* Google Font */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap");
+
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+}
+
+/* ===== Background ===== */
+.login-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* premium gradient */
+  background: linear-gradient(135deg, #4c5ca4, #9054cc);
+
+  position: relative;
+  overflow: hidden;
+}
+
+/* subtle glow behind card */
+.login-container::before {
+  content: "";
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.25), transparent 70%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  filter: blur(60px);
+}
+
+/* ===== Card ===== */
+.login-card {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(18px);
+
+  padding: 45px 35px;
+  border-radius: 22px;
+  width: 90%;
+  max-width: 360px;
+  text-align: center;
+
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+
+  animation: fadeUp 0.7s ease;
+}
+
+/* entrance animation */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
   }
-  
-  /* Glass card */
-  .login-card {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(15px);
-    padding: 40px;
-    border-radius: 20px;
-    width: 320px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    color: white;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  /* Inputs */
-  .login-input {
-    width: 100%;
-    padding: 12px;
-    margin-top: 15px;
-    border-radius: 10px;
-    border: none;
-    outline: none;
-    font-size: 14px;
+}
+
+/* ===== Title ===== */
+.login-card h2 {
+  color: #ffffff;
+  margin-bottom: 25px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* ===== Inputs ===== */
+.login-card input {
+  width: 90%;
+  margin: 12px 0;
+  padding: 13px;            /* same vertical size as buttons */
+
+  border: none;
+  border-radius: 12px;      /* match button roundness */
+  outline: none;
+
+  font-size: 15px;          /* same text size as buttons */
+  font-family: "Poppins", sans-serif;
+
+  background: rgba(255, 255, 255, 0.9);
+  transition: 0.25s ease;
+}
+
+/* input focus glow */
+.login-card input:focus {
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.5);
+  background: #ffffff;
+}
+
+/* ===== Buttons ===== */
+.btn-login,
+.btn-register {
+  width: 100%;
+  padding: 13px;
+  margin-top: 12px;
+
+  border: none;
+  border-radius: 12px;
+
+  color: white;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+/* Login gradient */
+.btn-login {
+  background: linear-gradient(90deg, #36d1dc, #5b86e5);
+  box-shadow: 0 6px 18px rgba(91, 134, 229, 0.4);
+}
+
+/* Register gradient */
+.btn-register {
+  background: linear-gradient(90deg, #ff9966, #ff5e62);
+  box-shadow: 0 6px 18px rgba(255, 94, 98, 0.4);
+}
+
+/* Hover effects */
+.btn-login:hover,
+.btn-register:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* Click effect */
+.btn-login:active,
+.btn-register:active {
+  transform: scale(0.98);
+}
+
+/* Password wrapper */
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper input {
+  width: 83%;
+  padding-right: 40px;
+}
+
+/* Eye icon */
+.eye-icon {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+.eye-icon:hover {
+  opacity: 1;
+}
+
+/* Spinner */
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 3px solid rgba(255, 255, 255, 0.4);
+  border-top: 3px solid white;
+  border-radius: 50%;
+  display: inline-block;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
-  
-  /* Button */
-  .login-btn {
-    width: 100%;
-    margin-top: 20px;
-    padding: 12px;
-    border: none;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #ff6ec4, #7873f5);
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-  
-  .login-btn:hover {
-    transform: scale(1.05);
-    opacity: 0.9;
-  }
-  
+}

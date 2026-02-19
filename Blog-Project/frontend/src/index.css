@@ -1,79 +1,47 @@
-body {
+* {
   margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #667eea, #764ba2);
   min-height: 100vh;
 }
 
-/* container */
-.container {
-  width: 90%;
-  max-width: 900px;
-  margin: auto;
-  padding-top: 30px;
-}
-
-/* navbar */
-.navbar {
-  background: white;
-  padding: 15px 25px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-radius: 10px;
-  margin-bottom: 20px;
-}
-
-.navbar h2 {
-  margin: 0;
-  color: #6a11cb;
-}
-
-.logout-btn {
-  background: #ff4d4d;
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-/* blog card */
-.card {
-  background: white;
+/* Glass card */
+.glass {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
   padding: 20px;
-  border-radius: 12px;
-  margin-bottom: 15px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
-.card h3 {
-  margin-top: 0;
-}
-
-.btn {
-  margin-right: 10px;
-  padding: 6px 12px;
+/* Form inputs */
+input,
+textarea {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 10px;
   border: none;
-  border-radius: 6px;
-  cursor: pointer;
+  outline: none;
 }
 
-.edit {
-  background: #4caf50;
-  color: white;
-}
-
-.delete {
-  background: #f44336;
-  color: white;
-}
-
-.create-btn {
-  background: #2575fc;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 8px;
+button {
+  margin-top: 12px;
+  padding: 10px 16px;
   border: none;
+  border-radius: 10px;
+  background: #ff7a18;
+  color: white;
   cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  transform: scale(1.05);
+  background: #ff512f;
 }

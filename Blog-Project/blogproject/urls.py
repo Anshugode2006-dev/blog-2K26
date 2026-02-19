@@ -3,18 +3,11 @@ from django.urls import path
 from blog import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path("admin/", admin.site.urls),
 
-    # React frontend routes
-    path('', views.home, name='home'),
-    path('blogs', views.home),
-    path('create', views.home),
+    path("api/register/", views.api_register),
+    path("api/login/", views.api_login),
 
-    # Auth APIs
-    path('api/login/', views.api_login),
-    path('api/logout/', views.api_logout),
-
-    # Blog API
-    path('api/posts/', views.create_blog),
-    path('api/register/', views.api_register),
+    path("api/posts/", views.posts),
+    path("api/posts/<int:pk>/", views.post_detail),
 ]

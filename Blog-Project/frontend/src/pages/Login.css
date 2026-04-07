@@ -1,179 +1,199 @@
-/* Google Font */
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap");
+@import "../styles/theme.css";
 
-body {
-  margin: 0;
-  font-family: "Poppins", sans-serif;
-}
-
-/* ===== Background ===== */
+/* ── Page ── */
 .login-container {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-
-  /* premium gradient */
-  background: linear-gradient(135deg, #4c5ca4, #9054cc);
-
+  background: var(--bg);
   position: relative;
   overflow: hidden;
 }
 
-/* subtle glow behind card */
+/* subtle grid texture */
 .login-container::before {
   content: "";
   position: absolute;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.25), transparent 70%);
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(91,138,245,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(91,138,245,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* accent glow */
+.login-container::after {
+  content: "";
+  position: absolute;
+  width: 520px;
+  height: 520px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(91,138,245,0.12) 0%, transparent 70%);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  filter: blur(60px);
+  pointer-events: none;
 }
 
-/* ===== Card ===== */
+/* ── Card ── */
 .login-card {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(18px);
-
-  padding: 45px 35px;
-  border-radius: 22px;
+  position: relative;
+  z-index: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 48px 40px 40px;
   width: 90%;
-  max-width: 360px;
+  max-width: 380px;
   text-align: center;
-
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-
-  animation: fadeUp 0.7s ease;
+  box-shadow: var(--shadow-card);
+  animation: fadeUp 0.55s cubic-bezier(0.22,1,0.36,1) both;
 }
 
-/* entrance animation */
 @keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(25px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ===== Title ===== */
+/* ── Brand ── */
+.login-card h1 {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--text);
+  letter-spacing: -0.5px;
+  margin-bottom: 4px;
+}
+
+.login-card h1 span {
+  color: var(--accent);
+}
+
 .login-card h2 {
-  color: #ffffff;
-  margin-bottom: 25px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--muted);
+  margin-bottom: 32px;
+  letter-spacing: 0.2px;
 }
 
-/* ===== Inputs ===== */
+/* ── Inputs ── */
 .login-card input {
-  width: 90%;
-  margin: 12px 0;
-  padding: 13px;            /* same vertical size as buttons */
-
-  border: none;
-  border-radius: 12px;      /* match button roundness */
-  outline: none;
-
-  font-size: 15px;          /* same text size as buttons */
-  font-family: "Poppins", sans-serif;
-
-  background: rgba(255, 255, 255, 0.9);
-  transition: 0.25s ease;
-}
-
-/* input focus glow */
-.login-card input:focus {
-  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.5);
-  background: #ffffff;
-}
-
-/* ===== Buttons ===== */
-.btn-login,
-.btn-register {
+  display: block;
   width: 100%;
-  padding: 13px;
-  margin-top: 12px;
-
-  border: none;
-  border-radius: 12px;
-
-  color: white;
-  font-weight: 600;
-  font-size: 15px;
-  letter-spacing: 0.3px;
-  cursor: pointer;
-  transition: all 0.25s ease;
+  padding: 13px 16px;
+  margin: 10px 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-/* Login gradient */
-.btn-login {
-  background: linear-gradient(90deg, #36d1dc, #5b86e5);
-  box-shadow: 0 6px 18px rgba(91, 134, 229, 0.4);
+.login-card input::placeholder { color: var(--meta); }
+
+.login-card input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(91,138,245,0.18);
 }
 
-/* Register gradient */
-.btn-register {
-  background: linear-gradient(90deg, #ff9966, #ff5e62);
-  box-shadow: 0 6px 18px rgba(255, 94, 98, 0.4);
-}
-
-/* Hover effects */
-.btn-login:hover,
-.btn-register:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
-}
-
-/* Click effect */
-.btn-login:active,
-.btn-register:active {
-  transform: scale(0.98);
-}
-
-/* Password wrapper */
+/* ── Password wrapper ── */
 .password-wrapper {
   position: relative;
 }
 
 .password-wrapper input {
-  width: 83%;
-  padding-right: 40px;
+  padding-right: 44px;
 }
 
-/* Eye icon */
 .eye-icon {
   position: absolute;
-  right: 20px;
+  right: 14px;
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
-  font-size: 16px;
-  opacity: 0.9;
+  font-size: 15px;
+  color: var(--muted);
+  transition: color 0.2s;
+  user-select: none;
 }
 
-.eye-icon:hover {
-  opacity: 1;
+.eye-icon:hover { color: var(--text); }
+
+/* ── Buttons ── */
+.btn-login,
+.btn-register {
+  display: block;
+  width: 100%;
+  padding: 13px;
+  margin-top: 20px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s;
 }
 
-/* Spinner */
+.btn-login {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn-register {
+  background: var(--success);
+  color: #fff;
+}
+
+.btn-login:hover,
+.btn-register:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.btn-login:active,
+.btn-register:active {
+  transform: scale(0.98);
+}
+
+.btn-login:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── Footer link ── */
+.login-card p {
+  margin-top: 20px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.login-card p span {
+  color: var(--accent);
+  cursor: pointer;
+  font-weight: 500;
+  transition: opacity 0.2s;
+}
+
+.login-card p span:hover { opacity: 0.75; }
+
+/* ── Spinner ── */
 .spinner {
-  width: 18px;
-  height: 18px;
-  border: 3px solid rgba(255, 255, 255, 0.4);
-  border-top: 3px solid white;
-  border-radius: 50%;
   display: inline-block;
-  animation: spin 0.8s linear infinite;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
+@keyframes spin { to { transform: rotate(360deg); } }

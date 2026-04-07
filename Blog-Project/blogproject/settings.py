@@ -2,13 +2,10 @@ from pathlib import Path
 import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # ---------------- SECURITY ----------------
 SECRET_KEY = "django-insecure-change-this-key"
 DEBUG = True
-
 ALLOWED_HOSTS = ['akshitgode.pythonanywhere.com', '127.0.0.1']
-
 
 # ---------------- INSTALLED APPS ----------------
 INSTALLED_APPS = [
@@ -18,20 +15,15 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
-    # Third-party
     "rest_framework",
     "rest_framework.authtoken",
     "corsheaders",
-
-    # Local app
     "blog",
 ]
 
-
 # ---------------- MIDDLEWARE ----------------
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",   # MUST be first
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -41,12 +33,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-
-# ---------------- URLS ----------------
 ROOT_URLCONF = "blogproject.urls"
 
-
-# ---------------- TEMPLATES (ADMIN FIX) ----------------
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -63,12 +51,8 @@ TEMPLATES = [
     },
 ]
 
-
-# ---------------- WSGI ----------------
 WSGI_APPLICATION = "blogproject.wsgi.application"
 
-
-# ---------------- DATABASE ----------------
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -76,8 +60,6 @@ DATABASES = {
     }
 }
 
-
-# ---------------- PASSWORD VALIDATION ----------------
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -85,29 +67,24 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-
-# ---------------- INTERNATIONALIZATION ----------------
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
-
 # ---------------- STATIC FILES ----------------
-
 STATIC_URL = "/static/"
-
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "build/static"),
-]
-
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "build/static")]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
-# ---------------- CORS (React connection fix) ----------------
+# ---------------- MEDIA FILES ----------------
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+# ---------------- CORS ----------------
 CORS_ALLOW_ALL_ORIGINS = True
 
-
-# ---------------- DRF + TOKEN AUTH ----------------
+# ---------------- DRF ----------------
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",

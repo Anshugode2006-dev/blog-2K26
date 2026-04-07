@@ -1,55 +1,54 @@
 import React, { useEffect, useState } from "react";
 import API from "../api";
 import { useNavigate, useParams } from "react-router-dom";
-import "./EditBlog.css";   // ✅ correct CSS import
+import "./EditBlog.css";
 
 export default function EditBlog() {
   const { id } = useParams();
   const navigate = useNavigate();
-
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
-  // Fetch blog by ID
   useEffect(() => {
     const fetchPost = async () => {
       try {
         const res = await API.get(`posts/${id}/`);
         setTitle(res.data.title);
         setContent(res.data.content);
-      } catch (err) {
+      } catch {
         alert("Failed to load blog");
         navigate("/blogs");
       } finally {
         setLoading(false);
       }
     };
-
     fetchPost();
   }, [id, navigate]);
 
-  // Update blog
   const update = async () => {
     if (!title.trim() || !content.trim()) {
       alert("Title and content cannot be empty");
       return;
     }
-
     try {
+      setSaving(true);
       await API.put(`posts/${id}/`, { title, content });
-      alert("Blog updated successfully ✅");
       navigate("/blogs");
     } catch {
       alert("Update failed ❌");
+    } finally {
+      setSaving(false);
     }
   };
 
-  // Loading state
   if (loading) {
     return (
       <div className="edit-page">
-        <h2>Loading...</h2>
+        <div className="edit-card">
+          <p style={{ color: "var(--muted)", textAlign: "center" }}>Loading...</p>
+        </div>
       </div>
     );
   }
@@ -57,31 +56,45 @@ export default function EditBlog() {
   return (
     <div className="edit-page">
       <div className="edit-card">
-        <h2>Edit Blog</h2>
+        <button className="back-link" onClick={() => navigate("/blogs")}>
+          ← Back to posts
+        </button>
 
-        <input
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Title"
-        />
+        <h2>Edit Post</h2>
+        <p className="subtitle">Make your changes below</p>
 
-        <textarea
-          rows="5"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="Content"
-        />
+        <div className="form-group">
+          <label>Title</label>
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Post title"
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Content</label>
+          <textarea
+            rows="7"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Post content"
+          />
+        </div>
 
         <div className="edit-actions">
-          <button className="edit-btn update-btn" onClick={update}>
-            Update
-          </button>
-
           <button
             className="edit-btn cancel-btn"
             onClick={() => navigate("/blogs")}
           >
             Cancel
+          </button>
+          <button
+            className="edit-btn update-btn"
+            onClick={update}
+            disabled={saving}
+          >
+            {saving ? "Saving..." : "Save Changes"}
           </button>
         </div>
       </div>

@@ -1,75 +1,74 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "./Login.css";
+import "./Login.css"; // shared styles
 
-function Register() {
+export default function Register() {
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleRegister = async () => {
+    if (!username.trim() || !password.trim()) {
+      alert("Please enter username and password");
+      return;
+    }
     try {
-      await axios.post(
-        "http://127.0.0.1:8000/api/register/",
-        {
-          username,
-          email,
-          password,
-        },
-        {
-          withCredentials: true,   
-        }
-      );
-
-      alert("Registration successful ");
-
-      navigate("/blogs");   
+      setLoading(true);
+      await axios.post("https://akshitgode.pythonanywhere.com/api/register/", {
+        username,
+        password,
+      });
+      alert("Registration successful ✅");
+      setUsername("");
+      setPassword("");
+      navigate("/");
     } catch (error) {
       if (error.response) {
-        alert(error.response.data.error || "Registration failed ");
+        alert(error.response.data.error || "Registration failed");
       } else {
-        alert("Server error ");
+        alert("Server error");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
+  const handleKey = (e) => { if (e.key === "Enter") handleRegister(); };
+
   return (
-    <div className="login-page">
+    <div className="login-container">
       <div className="login-card">
-        <h2>Create Account </h2>
+      <h1>Mini Blog App</h1>
+        <h2>Create a new account</h2>
 
         <input
-          className="login-input"
-          type="text"
           placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          onKeyDown={handleKey}
+          autoComplete="username"
         />
 
         <input
-          className="login-input"
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-
-        <input
-          className="login-input"
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          onKeyDown={handleKey}
+          autoComplete="new-password"
         />
 
-        <button className="login-btn" onClick={handleRegister}>
-          Register
+        <button className="btn-register" onClick={handleRegister} disabled={loading}>
+          {loading ? <span className="spinner" /> : "Create account"}
         </button>
+
+        <p>
+          Already have an account?{" "}
+          <span onClick={() => navigate("/")}>Sign in</span>
+        </p>
       </div>
     </div>
   );
 }
-
-export default Register;

@@ -1,87 +1,221 @@
-/* ===== Background with your image ===== */
+@import "../styles/theme.css";
+
 .create-page {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  
-    background: url("../assets/create-bg.jpg") no-repeat center center/cover;
-    font-family: "Poppins", sans-serif;
-    position: relative;
-  }
-  
-  /* Optional soft overlay for better readability */
-  .create-page::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: rgba(102, 76, 160, 0.45);
-    backdrop-filter: blur(2px);
-  }
-  
-  /* ===== Glass Card ===== */
-  .create-card {
-    position: relative;
-    z-index: 1;
-  
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(18px);
-  
-    padding: 40px;
-    border-radius: 22px;
-    width: 90%;
-    max-width: 450px;
-  
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-  
-    text-align: center;
-  }
-  
-  /* Title */
-  .create-card h2 {
-    color: white;
-    margin-bottom: 22px;
-    font-weight: 600;
-  }
-  
-  /* Inputs */
-  .create-card input,
-  .create-card textarea {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-  
-    border: none;
-    border-radius: 12px;
-    outline: none;
-  
-    font-size: 14px;
-    background: rgba(255, 255, 255, 0.9);
-  }
-  
-  /* Button */
-  .create-card button {
-    width: 100%;
-    padding: 13px;
-    margin-top: 12px;
-  
-    border: none;
-    border-radius: 14px;
-  
-    color: white;
-    font-weight: 600;
-    font-size: 15px;
-  
-    cursor: pointer;
-    transition: 0.25s ease;
-  
-    background: linear-gradient(90deg, #36d1dc, #5b86e5);
-    box-shadow: 0 6px 18px rgba(91, 134, 229, 0.4);
-  }
-  
-  .create-card button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
-  }
-  
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background: var(--bg);
+  font-family: var(--font-body);
+  padding: 40px 24px 60px;
+  position: relative;
+}
+
+.create-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(rgba(91,138,245,0.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+
+/* ── Card ── */
+.create-card {
+  position: relative;
+  z-index: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 40px 36px;
+  width: 100%;
+  max-width: 520px;
+  box-shadow: var(--shadow-card);
+  animation: fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Back link ── */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+  margin-bottom: 28px;
+  transition: color 0.2s;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  padding: 0;
+}
+
+.back-link:hover { color: var(--text); }
+
+/* ── Titles ── */
+.create-card h2 {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--text);
+  margin-bottom: 4px;
+  letter-spacing: -0.3px;
+}
+
+.create-card .subtitle {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 28px;
+}
+
+/* ── Form groups ── */
+.form-group {
+  margin-bottom: 18px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 8px;
+}
+
+.optional {
+  text-transform: none;
+  font-size: 11px;
+  color: var(--meta);
+  letter-spacing: 0;
+  font-weight: 400;
+}
+
+/* ── Inputs ── */
+.create-card input,
+.create-card textarea {
+  display: block;
+  width: 100%;
+  padding: 13px 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  outline: none;
+  resize: vertical;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.create-card input::placeholder,
+.create-card textarea::placeholder { color: var(--meta); }
+
+.create-card input:focus,
+.create-card textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(91,138,245,0.15);
+}
+
+/* ── Upload area ── */
+.upload-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 28px 20px;
+  border: 1.5px dashed var(--border-hi);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  background: var(--card);
+}
+
+.upload-area:hover {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.upload-icon { font-size: 28px; }
+
+.upload-text {
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.upload-hint {
+  font-size: 12px;
+  color: var(--meta);
+}
+
+/* ── Image preview ── */
+.image-preview-wrapper {
+  position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.image-preview {
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  display: block;
+}
+
+.remove-image {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: background 0.2s;
+}
+
+.remove-image:hover { background: var(--danger); }
+
+/* ── Publish button ── */
+.btn-publish {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px;
+  margin-top: 8px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.btn-publish:hover {
+  opacity: 0.87;
+  transform: translateY(-1px);
+}
+
+.btn-publish:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}

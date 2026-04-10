@@ -56,7 +56,7 @@ export default function ViewPost() {
         {post?.image && (
           <div className="view-cover">
             <img
-              src={`https://akshitgode.pythonanywhere.com/media/${post.image}`}
+              src={`https://akshitgode.pythonanywhere.com${post.image}`}
               alt={post.title}
               className="cover-img"
             />

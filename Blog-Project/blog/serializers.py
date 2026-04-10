@@ -11,7 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class PostSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
-    image = serializers.ImageField(use_url=True)  # ← this is the fix
+    image = serializers.ImageField(required=False, allow_null=True)
 
     class Meta:
         model = Post

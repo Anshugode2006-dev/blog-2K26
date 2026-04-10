@@ -48,10 +48,6 @@ def api_login(request):
 @api_view(["GET", "POST"])
 @permission_classes([IsAuthenticated])
 def posts(request):
-    """
-    GET  → list all posts of logged-in user
-    POST → create new post
-    """
 
     # 🔹 LIST POSTS
     if request.method == "GET":
@@ -71,11 +67,6 @@ def posts(request):
 @api_view(["GET", "PUT", "DELETE"])
 @permission_classes([IsAuthenticated])
 def post_detail(request, pk):
-    """
-    GET    → retrieve single post (for Edit page)
-    PUT    → update post
-    DELETE → delete post
-    """
 
     try:
         post = Post.objects.get(pk=pk, author=request.user)
@@ -89,7 +80,7 @@ def post_detail(request, pk):
 
     # 🔹 UPDATE POST
     if request.method == "PUT":
-        serializer = PostSerializer(post, data=request.data)
+        serializer = PostSerializer(post, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=200)
@@ -99,3 +90,4 @@ def post_detail(request, pk):
     if request.method == "DELETE":
         post.delete()
         return Response({"message": "Post deleted"}, status=204)
+    

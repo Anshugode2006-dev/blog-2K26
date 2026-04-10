@@ -34,7 +34,16 @@ export default function EditBlog() {
     }
     try {
       setSaving(true);
-      await API.put(`posts/${id}/`, { title, content });
+
+      // FormData required after image support was added
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("content", content);
+
+      await API.put(`posts/${id}/`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
       navigate("/blogs");
     } catch {
       alert("Update failed ❌");
@@ -47,7 +56,9 @@ export default function EditBlog() {
     return (
       <div className="edit-page">
         <div className="edit-card">
-          <p style={{ color: "var(--muted)", textAlign: "center" }}>Loading...</p>
+          <p style={{ color: "var(--muted)", textAlign: "center" }}>
+            Loading...
+          </p>
         </div>
       </div>
     );

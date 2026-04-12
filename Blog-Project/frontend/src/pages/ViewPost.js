@@ -52,11 +52,10 @@ export default function ViewPost() {
 
       <article className="view-article">
 
-        {/* Cover image — only shown if post has one */}
         {post?.image && (
           <div className="view-cover">
             <img
-              src={`https://akshitgode.pythonanywhere.com${post.image}`}
+              src={post.image}
               alt={post.title}
               className="cover-img"
             />

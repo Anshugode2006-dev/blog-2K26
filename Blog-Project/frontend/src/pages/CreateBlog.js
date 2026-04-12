@@ -31,18 +31,18 @@ export default function CreateBlog() {
     try {
       setLoading(true);
 
-      // FormData required to send image file
       const formData = new FormData();
       formData.append("title", title);
       formData.append("content", content);
-      if (image) formData.append("image", image);
+      if (image) {
+        formData.append("image", image, image.name);
+      }
 
-      await API.post("posts/", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      await API.post("posts/", formData);  // ← remove custom headers, let browser set them
 
       navigate("/blogs");
-    } catch {
+    } catch (e) {
+      console.log(e.response?.data);
       alert("Failed to create post");
     } finally {
       setLoading(false);

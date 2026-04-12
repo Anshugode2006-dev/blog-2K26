@@ -40,9 +40,7 @@ export default function EditBlog() {
       formData.append("title", title);
       formData.append("content", content);
 
-      await API.put(`posts/${id}/`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      await API.put(`posts/${id}/`, formData);
 
       navigate("/blogs");
     } catch {
